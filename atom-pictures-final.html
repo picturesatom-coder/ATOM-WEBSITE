@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atom Pictures | Stories that Travel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg: #000000;
+            --color-text: #ffffff;
+            --font-display: 'Bebas Neue', sans-serif;
+            --font-body: 'Crimson Text', serif;
+        }
+
+        body {
+            background: var(--color-bg);
+            color: var(--color-text);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+        }
+
+        /* Initial Hero - Black Background Only */
+        .hero-section {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: var(--color-bg);
+            transition: opacity 0.5s ease;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.02) 50%, transparent 100%);
+            pointer-events: none;
+            animation: scan 8s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: clamp(4rem, 15vw, 12rem);
+            letter-spacing: 0.05em;
+            line-height: 0.9;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease forwards;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background: var(--color-text);
+            animation: fadeIn 1.5s ease 0.5s forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeIn 1.5s ease 2s forwards;
+        }
+
+        .scroll-text {
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            font-family: var(--font-body);
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 50px;
+            background: linear-gradient(to bottom, var(--color-text), transparent);
+            animation: scrollDown 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollDown {
+            0%, 100% { transform: translateY(0); opacity: 1; }
+            50% { transform: translateY(20px); opacity: 0; }
+        }
+
+        /* Video Background Section */
+        .video-background-section {
+            height: 200vh;
+            position: relative;
+        }
+
+        .video-fixed-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .video-fixed-wrapper.visible {
+            opacity: 1;
+        }
+
+        #bgVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(0.3) contrast(1.1);
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.7) 0%,
+                rgba(0, 0, 0, 0.3) 40%,
+                rgba(0, 0, 0, 0.3) 60%,
+                rgba(0, 0, 0, 0.8) 100%
+            );
+            pointer-events: none;
+        }
+
+        .tagline-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .tagline-overlay.visible {
+            opacity: 1;
+        }
+
+        .tagline {
+            font-family: var(--font-body);
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-style: italic;
+            letter-spacing: 0.15em;
+            font-weight: 300;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        /* YouTube Section */
+        .youtube-section {
+            position: relative;
+            z-index: 10;
+            background: transparent;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5rem 2rem;
+            padding-top: 10rem;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+        }
+
+        .youtube-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 0%, var(--color-bg) 15%, var(--color-bg) 100%);
+            z-index: -1;
+        }
+
+        .youtube-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 8vw, 6rem);
+            letter-spacing: 0.1em;
+            text-align: center;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: var(--color-text);
+        }
+
+        .section-subtitle {
+            font-family: var(--font-body);
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            font-style: italic;
+            text-align: center;
+            opacity: 0.7;
+            margin-top: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .youtube-container {
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+        }
+
+        .youtube-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 30px 80px rgba(0, 0, 0, 0.6),
+                0 0 150px rgba(255, 255, 255, 0.03);
+        }
+
+        .youtube-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Content Section */
+        .content-section {
+            position: relative;
+            z-index: 10;
+            background: var(--color-bg);
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5rem 2rem;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+        }
+
+        .content-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .content-grid {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 4rem;
+        }
+
+        .content-item {
+            text-align: center;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .content-item:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-10px);
+        }
+
+        .content-number {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            opacity: 0.2;
+            line-height: 1;
+        }
+
+        .content-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            letter-spacing: 0.1em;
+            margin: 1rem 0;
+        }
+
+        .content-desc {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 10;
+            background: var(--color-bg);
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        footer p {
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            opacity: 0.5;
+        }
+
+        /* Grain overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .video-background-section {
+                height: 200vh;
+            }
+
+            .youtube-section {
+                padding: 3rem 1rem;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section - Black Background with Logo -->
+    <section class="hero-section">
+        <h1 class="logo">ATOM<br>PICTURES</h1>
+        <div class="scroll-indicator">
+            <span class="scroll-text">Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Video Background Section with Tagline -->
+    <section class="video-background-section">
+        <div class="video-fixed-wrapper" id="videoWrapper">
+            <video id="bgVideo" preload="auto" muted playsinline webkit-playsinline crossorigin="anonymous">
+                <!-- Sample video for testing - replace with your own -->
+                <!--<source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">-->
+                <!-- When using your own video, uncomment below and comment above -->
+                <source src="Snows3.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+
+        <div class="tagline-overlay" id="taglineOverlay">
+            <p class="tagline">Stories that Travel</p>
+        </div>
+    </section>
+
+    <!-- YouTube Preview Section -->
+    <section class="youtube-section">
+        <h2 class="section-title">OUR LATEST WORK</h2>
+        <p class="section-subtitle">Experience our storytelling</p>
+        
+        <div class="youtube-container">
+            <div class="youtube-wrapper">
+                <!-- Replace VIDEO_ID with your YouTube video ID -->
+                <iframe 
+                    src="https://www.youtube.com/embed/VI5PfBqs4f8" 
+                    title="LUNA" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section">
+        <div class="content-grid">
+            <div class="content-item">
+                <div class="content-number">01</div>
+                <h3 class="content-title">VISION</h3>
+                <p class="content-desc">Crafting narratives that transcend borders and connect cultures through the universal language of cinema.</p>
+            </div>
+            <div class="content-item">
+                <div class="content-number">02</div>
+                <h3 class="content-title">CRAFT</h3>
+                <p class="content-desc">Every frame is a deliberate choice, every story a journey worth taking.</p>
+            </div>
+            <div class="content-item">
+                <div class="content-number">03</div>
+                <h3 class="content-title">IMPACT</h3>
+                <p class="content-desc">Stories that linger long after the credits roll, leaving lasting impressions worldwide.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p style="margin-bottom: 1rem; opacity: 0.8;">Reach out: <a href="mailto:contact@atompictures.us" style="color: #ffffff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.3); transition: border-color 0.3s ease;">contact@atompictures.us</a></p>
+        <p>2025 Atom Pictures</p>
+    </footer>
+
+    <script>
+        const video = document.getElementById('bgVideo');
+        const videoSection = document.querySelector('.video-background-section');
+        const videoWrapper = document.getElementById('videoWrapper');
+        const taglineOverlay = document.getElementById('taglineOverlay');
+        const heroSection = document.querySelector('.hero-section');
+
+        let videoDuration;
+        let isVideoReady = false;
+        let targetTime = 0;
+        let currentVideoTime = 0;
+
+        // Load video
+        video.addEventListener('loadedmetadata', () => {
+            videoDuration = video.duration;
+            isVideoReady = true;
+            video.currentTime = 0;
+            currentVideoTime = 0;
+            console.log('Video loaded. Duration:', videoDuration);
+        });
+
+        video.addEventListener('canplaythrough', () => {
+            isVideoReady = true;
+        });
+
+        // Preload video
+        video.preload = 'auto';
+        video.load();
+
+        // Smooth video interpolation
+        function smoothVideoUpdate() {
+            if (!isVideoReady || !videoDuration) {
+                requestAnimationFrame(smoothVideoUpdate);
+                return;
+            }
+
+            const ease = 0.2;
+            const diff = targetTime - currentVideoTime;
+            currentVideoTime += diff * ease;
+
+            if (Math.abs(video.currentTime - currentVideoTime) > 0.016) {
+                video.currentTime = currentVideoTime;
+            }
+
+            requestAnimationFrame(smoothVideoUpdate);
+        }
+
+        smoothVideoUpdate();
+
+        function handleScroll() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const heroHeight = heroSection.offsetHeight;
+            const videoSectionTop = videoSection.offsetTop;
+            const videoSectionHeight = videoSection.offsetHeight;
+            const windowHeight = window.innerHeight;
+            
+            // Calculate fade progress
+            const scrollThreshold = heroHeight * 0.5;
+            
+            // Show tagline only between 40% and end of video section
+            if (scrollTop > heroHeight * 0.4 && scrollTop < videoSectionTop + videoSectionHeight) {
+                taglineOverlay.classList.add('visible');
+            } else {
+                taglineOverlay.classList.remove('visible');
+            }
+            
+            // Fade out hero logo (starts immediately on scroll)
+            const heroFadeProgress = Math.min(scrollTop / scrollThreshold, 1);
+            heroSection.style.opacity = 1 - heroFadeProgress;
+            
+            // Only show hero when tagline is completely hidden
+            if (scrollTop < heroHeight * 0.4) {
+                heroSection.style.pointerEvents = 'auto';
+            } else {
+                heroSection.style.pointerEvents = 'none';
+            }
+            
+            // Show video wrapper when entering video section
+            if (scrollTop > heroHeight * 0.3) {
+                videoWrapper.classList.add('visible');
+            } else {
+                videoWrapper.classList.remove('visible');
+            }
+            
+            // Calculate scroll progress within video section
+            const scrollInVideoSection = scrollTop - videoSectionTop;
+            const maxScroll = videoSectionHeight - windowHeight;
+            const scrollProgress = Math.max(0, Math.min(1, scrollInVideoSection / maxScroll));
+            
+            // Update video time
+            if (isVideoReady && videoDuration && !isNaN(videoDuration) && videoDuration > 0) {
+                targetTime = scrollProgress * videoDuration;
+            }
+            
+            // Fade out tagline as video progresses (within video section only)
+            if (scrollTop > videoSectionTop) {
+                const taglineFade = Math.max(0, 1 - (scrollProgress * 2));
+                taglineOverlay.style.opacity = Math.min(1, taglineFade);
+            } else {
+                // Full opacity when entering
+                const entryProgress = Math.max(0, (scrollTop - heroHeight * 0.4) / (heroHeight * 0.2));
+                taglineOverlay.style.opacity = Math.min(1, entryProgress);
+            }
+            
+            // Hide video when scrolled past video section
+            const videoSectionEnd = videoSectionTop + videoSectionHeight;
+            if (scrollTop > videoSectionEnd) {
+                videoWrapper.style.display = 'none';
+            } else {
+                videoWrapper.style.display = 'block';
+            }
+        }
+
+        // Listen to scroll
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        // Intersection Observer for YouTube section fade-in
+        const youtubeSection = document.querySelector('.youtube-section');
+        const contentSection = document.querySelector('.content-section');
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        observer.observe(youtubeSection);
+        observer.observe(contentSection);
+
+        // Initial call
+        setTimeout(handleScroll, 300);
+
+        // Error handling
+        video.addEventListener('error', (e) => {
+            console.error('Video loading error:', e);
+            console.error('Error details:', video.error);
+        });
+    </script>
+</body>
+</html>
